@@ -185,7 +185,32 @@ try {
     
     @Override
     public void onMessage(String message) {
-      System.out.println("Received message: " + message);
+      var json = new JsonParser().parse(message).getAsJsonObject();
+      String messageType = json.get("type").getAsString();
+      
+      if(messageType.equals("ping")) {
+        // Send Pong message
+      }
+      
+      if(messageType.equals("blockfactsPrice")) {
+        // Handle blockfactsPrice
+      }
+      
+      if(messageType.equals("exchangeTrade")) {
+        // Handle exchangeTrade
+      }
+      
+      if(messageType.equals("unsubscribed")) {
+        // Handle unsubscribed event
+      }
+      
+      if(messageType.equals("heartbeat")) {
+        // Handle heartbeat event
+      }
+      
+      if(messageType.equals("error")) {
+        // Handle error
+      }
     }
 
     @Override
