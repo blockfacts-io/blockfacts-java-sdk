@@ -6,7 +6,7 @@ public class BlockfactsTradeModel {
     public double price;
     public double tradeSize;
     public String makerTaker;
-    public long tradeId;
+    public String tradeId;
     public String exchangeTime;
     public long blockfactsTime;
     public long epochExchangeTime;
