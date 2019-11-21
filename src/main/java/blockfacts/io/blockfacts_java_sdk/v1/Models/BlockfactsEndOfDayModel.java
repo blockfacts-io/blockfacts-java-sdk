@@ -11,7 +11,7 @@ public class BlockfactsEndOfDayModel {
     public double high;
     public double open;
     public double close;
-    public double tradesCount;
+    public long tradesCount;
     public long timestamp;
     public LocalDateTime date;
 }
