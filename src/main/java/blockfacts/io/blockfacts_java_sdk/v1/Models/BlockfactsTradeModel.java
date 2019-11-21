@@ -5,6 +5,7 @@ public class BlockfactsTradeModel {
     public String pair;
     public double price;
     public double tradeSize;
+    public double denominatorSize;
     public String makerTaker;
     public String tradeId;
     public String exchangeTime;
