@@ -202,8 +202,8 @@ public class ExchangeEndpoints extends Endpoints {
 	 * @param length Length (representing how many days back from the current day, Min = 0, Max = 20)
 	 * @return List of BlockfactsEndOfDayModels
 	 */
-	public List<BlockfactsEndOfDayModel> GetEndOfDayData(String asset, String denominator, String exchange, int length) {
-		List<BlockfactsEndOfDayModel> responseData = null;
+	public List<BlockfactsOHLCModel> GetEndOfDayData(String asset, String denominator, String exchange, int length) {
+		List<BlockfactsOHLCModel> responseData = null;
 		
 		restRequest = HttpRequest.newBuilder()
       	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/endOfDay?asset=" + asset + "&denominator=" + denominator + "&exchange=" + exchange + "&length=" + length))
@@ -216,7 +216,7 @@ public class ExchangeEndpoints extends Endpoints {
 		  try {
 			response = restClient.send(restRequest, BodyHandlers.ofString());
  	        JsonArray jsonObj = new JsonParser().parse(response.body()).getAsJsonArray();
-	        responseData = new Gson().fromJson(jsonObj, new TypeToken<List<BlockfactsEndOfDayModel>>(){}.getType());
+	        responseData = new Gson().fromJson(jsonObj, new TypeToken<List<BlockfactsOHLCModel>>(){}.getType());
 		  } catch (IOException e) {
 			e.printStackTrace();
 		  } catch (InterruptedException e) {
