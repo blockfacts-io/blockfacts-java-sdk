@@ -120,6 +120,41 @@ public class ExchangeEndpoints extends Endpoints {
 	}
 	
 	/**
+	 * Gets 20 latest trades that happened on the requested exchanges and pairs.
+	 * Reference: https://docs.blockfacts.io/?java#snapshot-trade-data
+	 * @param assets Asset tickers (e.g. BTC, ETH)
+	 * @param denominators Denominator tickers (e.g. USD, EUR)
+	 * @param exchanges Exchange names (e.g. KRAKEN, COINBASE)
+	 * @return JsonObject
+	 */
+	public JsonObject GetSnapshotTradeData(String assets, String denominators, String exchanges) {
+		assets = assets.trim().replace(" ", "");
+		denominators = denominators.trim().replace(" ", "");
+		exchanges = exchanges.trim().replace(" ", "");
+		
+		JsonObject responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/snapshot?asset=" + assets + "&denominator=" + denominators + "&exchange=" + exchanges))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+	
+	/**
 	 * Gets exchange historical price by asset-denominator, exchange, date, time and interval.
 	 * Reference: https://docs.blockfacts.io/?java#historical-trade-data
 	 * @param asset Asset ticker (e.g. BTC)

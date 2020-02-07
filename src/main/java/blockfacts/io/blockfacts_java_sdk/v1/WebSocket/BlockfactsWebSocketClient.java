@@ -77,10 +77,12 @@ public class BlockfactsWebSocketClient extends WebSocketClient {
 	 * Subscribe method used for subscribing to BlockFacts real-time crypto data stream.
 	 * @param channels List of BlockfactsChannelObjects to subscribe to
 	 */
-	public void Subscribe(List<BlockfactsChannelObject> channels) {
+	public void Subscribe(List<BlockfactsChannelObject> channels, Boolean snapshot, String id) {
 		BlockfactsSubscribeMessage subscribeMessage = new BlockfactsSubscribeMessage();
 		
 		subscribeMessage.type = "subscribe";
+		subscribeMessage.snapshot = snapshot;
+		if(id != "" || id != null) subscribeMessage.id = id;
 		subscribeMessage.X_API_KEY = this.key;
         subscribeMessage.X_API_SECRET = this.secret;
         subscribeMessage.channels = channels;

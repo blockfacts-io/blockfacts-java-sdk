@@ -70,6 +70,15 @@ JsonObject response = restClient.Blockfacts.GetCurrentData("BTC, ETH", "USD, EUR
 System.out.println(response);
 ```
 
+### Snapshot data
+Get last 20 BLOCKFACTS normalized prices for provided asset-denominator pairs.
+- [`JsonObject GetSnapshotData(String assets, String denominators)`](https://docs.blockfacts.io/?java#data-snapshot)
+
+```java
+JsonObject response = restClient.Blockfacts.GetSnapshotData("BTC, ETH", "USD, EUR");
+System.out.println(response);
+```
+
 ### Historical data
 Get historical normalization data by asset-denominator, date, time and interval.
 - [`BlockfactsHistoricalNormalizationResultsModel GetHistoricalData(String asset, String denominator, String date, String time, int interval, int page)`](https://docs.blockfacts.io/?java#historical-data)
@@ -129,6 +138,15 @@ JsonObject response = restClient.Exchanges.GetCurrentTradeData("BTC, ETH", "USD"
 System.out.println(response);
 ```
 
+### Snapshot trade data
+Get 20 latest trades that happened on the requested exchanges and pairs.
+- [`JsonObject GetSnapshotTradeData(String assets, String denominators, String exchanges)`](https://docs.blockfacts.io/?java#snapshot-trade-data)
+
+```java
+JsonObject response = restClient.Exchanges.GetSnapshotTradeData("BTC, ETH", "USD", "kraken, coinbase");
+System.out.println(response);
+```
+
 ### Historical trade data
 Get exchange historical price by asset-denominator, exchange, date, time and interval.
 - [`BlockfactsHistoricalExchangeTradesModel GetHistoricalTradeData(String asset, String denominator, String exchanges, String date, String time, int interval, int page)`](https://docs.blockfacts.io/?java#historical-trade-data)
@@ -171,7 +189,11 @@ Then you need to `BlockfactsWebSocketClient` instance, and override the `onOpen`
 After defining the wsClient you can choose to connect to BlockFacts WebSocket server via non-blocking method `Connect` or blocking method `ConnectBlocking`.
 
 Now you can send the `Subscribe` type message in order to start receiving the data. 
-We will pass it the `channelObjects` list, defined in the code snippet above.
+We must pass 3 fields to it: `channelObjects` list, `snapshot` and `id`.
+
+`Snapshot` field is boolean and if we provide true for it, the first message we will receive, will be the last 20 trades which happened on provided channelObjects.
+
+`Id` field represents the clearer way of message recognition. In example where you open multiple WebSocket connections in order to communicate with the server, the `Id` field will help you recognize the messages easier.
 
 In the code snippet below you can see full code on how to connect and subscribe to the real-time WebSocket feed.
 
@@ -190,6 +212,10 @@ try {
       
       if(messageType.equals("ping")) {
         // Send Pong message
+      }
+
+      if(messageType.equals("snapshot")) {
+        // Handle snapshot
       }
       
       if(messageType.equals("blockfactsPrice")) {
@@ -225,7 +251,8 @@ try {
   };
 
   wsClient.ConnectBlocking();
-  wsClient.Subscribe(channelObjects);
+  // In Subscribe method, we now provide (channelObjects, snapshot, id)
+  wsClient.Subscribe(channelObjects, true, "123");
 
   } catch (URISyntaxException e) {
     e.printStackTrace();

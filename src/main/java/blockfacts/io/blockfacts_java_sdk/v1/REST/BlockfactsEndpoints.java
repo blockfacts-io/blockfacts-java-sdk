@@ -90,6 +90,40 @@ public class BlockfactsEndpoints extends Endpoints {
 	}
 	
 	/**
+	 * Gets last 20 BLOCKFACTS normalized prices for provided asset-denominator pairs.
+	 * Reference: https://docs.blockfacts.io/?java#data-snapshot
+	 * @param assets Asset tickers (e.g. BTC, ETH)
+	 * @param denominators Denominator tickers (e.g. USD, EUR)
+	 * @return JsonObject
+	 */
+	public JsonObject GetSnapshotData(String assets, String denominators) {
+		assets = assets.trim().replace(" ", "");
+		denominators = denominators.trim().replace(" ", "");
+		
+		JsonObject responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/blockfacts/price/snapshot?asset=" + assets + "&denominator=" + denominators))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+	
+	
+	/**
 	 * Gets historical normalization data by asset-denominator, date, time and interval.
 	 * Reference: https://docs.blockfacts.io/?java#historical-data
 	 * @param asset Asset ticker (e.g. BTC)
