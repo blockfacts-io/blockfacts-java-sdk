@@ -82,7 +82,8 @@ public class BlockfactsWebSocketClient extends WebSocketClient {
 		
 		subscribeMessage.type = "subscribe";
 		subscribeMessage.snapshot = snapshot;
-		if(id != "" || id != null) subscribeMessage.id = id;
+		if(id != null) subscribeMessage.id = id;
+		else subscribeMessage.id = "";
 		subscribeMessage.X_API_KEY = this.key;
         subscribeMessage.X_API_SECRET = this.secret;
         subscribeMessage.channels = channels;
