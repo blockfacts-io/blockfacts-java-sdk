@@ -10,7 +10,7 @@
 
   <groupId>com.github.blockfacts-io</groupId>
   <artifactId>blockfacts-java-sdk</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <build>
         <plugins>
             <plugin>

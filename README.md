@@ -23,7 +23,7 @@ BlockfactsRestClient restClient = new BlockfactsRestClient(key, secret);
 
 // Test one endpoint
 List<BlockfactsAssetModel> response = restClient.Assets.ListAllAssets();
-System.out.println(response.get(9).asset + ", " + response.get(9).blockfactsTicker + ", " + response.get(9).isCrypto);
+System.out.println(response.get(9).asset + ", " + response.get(9).blockfactsTicker + ", " + response.get(9).type);
 ```
 
 ## Using Rest API Client
@@ -71,7 +71,7 @@ System.out.println(response);
 ```
 
 ### Snapshot data
-Get last 20 BLOCKFACTS normalized prices for provided asset-denominator pairs.
+Get last 600 BLOCKFACTS normalized prices for provided asset-denominator pairs.
 - [`JsonObject GetSnapshotData(String assets, String denominators)`](https://docs.blockfacts.io/?java#data-snapshot)
 
 ```java
@@ -139,7 +139,7 @@ System.out.println(response);
 ```
 
 ### Snapshot trade data
-Get 20 latest trades that happened on the requested exchanges and pairs.
+Get 600 latest trades that happened on the requested exchanges and pairs.
 - [`JsonObject GetSnapshotTradeData(String assets, String denominators, String exchanges)`](https://docs.blockfacts.io/?java#snapshot-trade-data)
 
 ```java
@@ -191,7 +191,7 @@ After defining the wsClient you can choose to connect to BlockFacts WebSocket se
 Now you can send the `Subscribe` type message in order to start receiving the data. 
 We must pass 3 fields to it: `channelObjects` list, `snapshot` and `id`.
 
-`Snapshot` field is boolean and if we provide true for it, the first message we will receive, will be the last 20 trades which happened on provided channelObjects.
+`Snapshot` field is boolean and if we provide true for it, the first message we will receive, will be the last 600 trades which happened on provided channelObjects.
 
 `Id` field represents the clearer way of message recognition. In example where you open multiple WebSocket connections in order to communicate with the server, the `Id` field will help you recognize the messages easier.
 
@@ -209,6 +209,10 @@ try {
     public void onMessage(String message) {
       var json = new JsonParser().parse(message).getAsJsonObject();
       String messageType = json.get("type").getAsString();
+
+      if(messageType.equals("subscribed")) {
+        // Handle subscribed event
+      }
       
       if(messageType.equals("ping")) {
         // Send Pong message

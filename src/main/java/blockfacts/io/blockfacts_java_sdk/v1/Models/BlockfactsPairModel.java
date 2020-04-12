@@ -6,7 +6,8 @@ public class BlockfactsPairModel {
     public String tickerId;
     public String blockfactsPair;
     public String assetName;
-    public int isCrypto;
+    public boolean active;
+    public String type;
     public String denominatorName;
     public String blockfactsDenominator;
 }
