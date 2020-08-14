@@ -79,12 +79,30 @@ JsonObject response = restClient.Blockfacts.GetSnapshotData("BTC, ETH", "USD, EU
 System.out.println(response);
 ```
 
+### OHLCV Snapshot data
+Get the snapshot of Blockfacts OHLCV data for provided asset-denominator pairs and intervals.
+- [`JsonObject GetOHLCVSnapshotData(String assets, String denominators, String intervals)`](https://docs.blockfacts.io/?java#data-snapshot-ohlcv-blockfacts)
+
+```java
+JsonObject response = restClient.Blockfacts.GetOHLCVSnapshotData("BTC, ETH", "USD, EUR", "1m, 3m, 1h");
+System.out.println(response);
+```
+**Note:** You can find all supported intervals on our official documentation here: https://docs.blockfacts.io/?java#data-snapshot-ohlcv-blockfacts
+
 ### Historical data
 Get historical normalization data by asset-denominator, date, time and interval.
 - [`BlockfactsHistoricalNormalizationResultsModel GetHistoricalData(String asset, String denominator, String date, String time, int interval, int page)`](https://docs.blockfacts.io/?java#historical-data)
 
 ```java
 BlockfactsHistoricalNormalizationResultsModel response = restClient.Blockfacts.GetHistoricalData("BTC", "USD", "2.9.2019", "14:00:00", 10, 1);
+```
+
+### OHLCV Historical data
+Get historical OHLCV data by asset-denominator, date, time and interval.
+- [`JsonObject GetHistoricalOHLCVData(String asset, String denominator, String interval, String dateStart, String timeStart, String dateEnd, String timeEnd, int page)`](https://docs.blockfacts.io/?java#ohlcv-historical-data)
+
+```java
+JsonObject response = restClient.Blockfacts.GetHistoricalOHLCVData("BTC", "USD", "1d", "20.5.2020", "11:00:00", "28.5.2020", "11:00:00", 1);
 ```
 
 ### Specific historical data
@@ -103,12 +121,13 @@ Get all running normalization pairs. Resulting in which asset-denominator pairs 
 List<BlockfactsRunningNormalizationPairsTradesModel> response = restClient.Blockfacts.GetNormalizationPairs();
 ```
 
-### End of day data
-Get normalized end of day data for specific asset-denominator.
-- [`List<BlockfactsEndOfDayModel> GetEndOfDayData(String asset, String denominator, int length)`](https://docs.blockfacts.io/?java#end-of-day-data)
+### Period movers
+Get the moving percentage, and difference in price over a certain time period.
+- [`JsonArray GetPeriodMovers(String denominator, String date, String interval, int sort)`](https://docs.blockfacts.io/?java#period-movers)
 
 ```java
-List<BlockfactsEndOfDayModel> response = restClient.Blockfacts.GetEndOfDayData("BTC", "USD", 1);
+JsonArray response = restClient.Blockfacts.GetPeriodMovers("USD", "11.8.2020", "sevenDay", -1);
+System.out.println(response.get(0));
 ```
 
 ## Exchange endpoints
@@ -129,6 +148,14 @@ Get information about a specific exchange by its name. Returns information such 
 BlockfactsExchangeDataModel response = restClient.Exchanges.GetSpecificExchangeData("KRAKEN");
 ```
 
+### Pair info
+Get the Blockfacts pair representation of the provided exchange pair.
+- [`JsonObject GetPairInfo(String exchange, String pair)`](https://docs.blockfacts.io/?java#pair-info)
+
+```java
+JsonObject response = restClient.Exchanges.GetPairInfo("BITSTAMP", "BTCUSD");
+```
+
 ### Current trade data
 Get current trade data for specific asset-denominator pair, from specific exchange(s).
 - [`JsonObject GetCurrentTradeData(String assets, String denominators, String exchanges)`](https://docs.blockfacts.io/?java#current-trade-data)
@@ -147,12 +174,30 @@ JsonObject response = restClient.Exchanges.GetSnapshotTradeData("BTC, ETH", "USD
 System.out.println(response);
 ```
 
+### OHLCV Snapshot data
+Get the snapshot of provided exchange(s) OHLCV data for provided asset-denominator pairs and intervals.
+- [`JsonObject GetOHLCVSnapshotData(String assets, String denominators, String exchanges, String intervals)`](https://docs.blockfacts.io/?java#data-snapshot-ohlcv-exchange)
+
+```java
+JsonObject response = restClient.Exchanges.GetOHLCVSnapshotData("BTC, ETH", "USD", "kraken, coinbase", "1m, 3m, 1h");
+System.out.println(response);
+```
+**Note:** You can find all supported intervals on our official documentation here: https://docs.blockfacts.io/?java#data-snapshot-ohlcv-exchange
+
 ### Historical trade data
 Get exchange historical price by asset-denominator, exchange, date, time and interval.
 - [`BlockfactsHistoricalExchangeTradesModel GetHistoricalTradeData(String asset, String denominator, String exchanges, String date, String time, int interval, int page)`](https://docs.blockfacts.io/?java#historical-trade-data)
 
 ```java
 BlockfactsHistoricalExchangeTradesModel response = restClient.Exchanges.GetHistoricalTradeData("BTC", "USD", "KRAKEN", "2.9.2019", "14:00:00", 10, 1);
+```
+
+### OHLCV Historical data
+Get historical OHLCV data by asset-denominator, exchange, date, time and interval
+- [`JsonObject GetHistoricalOHLCVData(String asset, String denominator, String exchanges, String interval, String dateStart, String timeStart, String dateEnd, String timeEnd, int page)`](https://docs.blockfacts.io/?java#ohlcv-historical-data-2)
+
+```java
+JsonObject response = restClient.Exchanges.GetHistoricalOHLCVData("BTC", "USD", "KRAKEN, COINBASE", "1d", "20.5.2020", "11:00:00", "28.5.2020", "11:00:00", 1);
 ```
 
 ### Specific trade data
@@ -163,12 +208,21 @@ Get historical exchange trades in specific second.
 List<BlockfactsTradeModel> response = restClient.Exchanges.GetSpecificTradeData("BTC", "USD", "KRAKEN, COINBASE", "2.9.2019", "14:00:00");
 ```
 
-### End of day data
-Get exchange end of day data for specific asset-denominator and exchange
-- [`List<BlockfactsEndOfDayModel> GetEndOfDayData(String asset, String denominator, String exchange, int length)`](https://docs.blockfacts.io/?java#end-of-day-data-2)
+### Total trade volume
+Get historical exchange trades in specific second.
+- [`JsonObject GetTotalTradeVolume(String asset, String denominator, String interval)`](https://docs.blockfacts.io/?java#total-trade-volume)
 
 ```java
-List<BlockfactsEndOfDayModel> response = restClient.Exchanges.GetEndOfDayData("BTC", "USD", "KRAKEN", 10);
+JsonObject response = restClient.Exchanges.GetTotalTradeVolume("BTC", "USD", "1d");
+```
+
+### Period movers
+Get the moving percentage, and difference in price over a certain time period.
+- [`JsonArray GetPeriodMovers(String exchange, String denominator, String date, String interval, int sort)`](https://docs.blockfacts.io/?java#period-movers-2)
+
+```java
+JsonArray response = restClient.Exchanges.GetPeriodMovers("KRAKEN", "USD", "11.8.2020", "sevenDay", 1);
+System.out.println(response.get(0));
 ```
 
 ## Using WebSocket API Client

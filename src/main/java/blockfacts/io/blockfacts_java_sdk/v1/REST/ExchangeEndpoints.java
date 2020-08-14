@@ -85,6 +85,36 @@ public class ExchangeEndpoints extends Endpoints {
 	}
 	
 	/**
+	 * Gets the Blockfacts pair representation of the provided exchange pair.
+	 * Reference: https://docs.blockfacts.io/?java#pair-info
+	 * @param exchange Name of the exchange (e.g. KRAKEN)
+	 * @param pair Pair name query on the provided exchange (e.g. BTCUSD or XBTUSD)
+	 * @return JsonObject
+	 */
+	public JsonObject GetPairInfo(String exchange, String pair) {
+		JsonObject responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/pair-info?exchange=" + exchange + "&pair=" + pair))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+	
+	/**
 	 * Gets current trade data for specific asset-denominator pair, from specific exchange(s).
 	 * Reference: https://docs.blockfacts.io/?java#current-trade-data
 	 * @param assets Asset tickers (e.g. BTC, ETH)
@@ -120,7 +150,7 @@ public class ExchangeEndpoints extends Endpoints {
 	}
 	
 	/**
-	 * Gets 20 latest trades that happened on the requested exchanges and pairs.
+	 * Gets 600 latest trades that happened on the requested exchanges and pairs.
 	 * Reference: https://docs.blockfacts.io/?java#snapshot-trade-data
 	 * @param assets Asset tickers (e.g. BTC, ETH)
 	 * @param denominators Denominator tickers (e.g. USD, EUR)
@@ -136,6 +166,43 @@ public class ExchangeEndpoints extends Endpoints {
 		
 		restRequest = HttpRequest.newBuilder()
 	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/snapshot?asset=" + assets + "&denominator=" + denominators + "&exchange=" + exchanges))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+
+		/**
+	 * Gets the snapshot of provided exchange(s) OHLCV data for provided asset-denominator pairs and intervals.
+	 * Reference: https://docs.blockfacts.io/?java#data-snapshot-ohlcv-exchange
+	 * @param assets Asset tickers (e.g. BTC, ETH)
+	 * @param denominators Denominator tickers (e.g. USD, EUR)
+	 * @param exchanges Exchange names (e.g. KRAKEN, COINBASE)
+	 * @param intervals Intervals (e.g. 1m, 3m, 1h)
+	 * @return JsonObject
+	 */
+	public JsonObject GetOHLCVSnapshotData(String assets, String denominators, String exchanges, String intervals) {
+		assets = assets.trim().replace(" ", "");
+		denominators = denominators.trim().replace(" ", "");
+		exchanges = exchanges.trim().replace(" ", "");
+		intervals = intervals.trim().replace(" ", "");
+		
+		JsonObject responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/ohlcv-snapshot?asset=" + assets + "&denominator=" + denominators + "&exchange=" + exchanges + "&interval=" + intervals))
 	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
 	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
 	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
@@ -193,6 +260,45 @@ public class ExchangeEndpoints extends Endpoints {
 	}
 	
 	/**
+	 * Gets historical OHLCV data by asset-denominator, exchange, date, time and interval.
+	 * Reference: https://docs.blockfacts.io/?java#ohlcv-historical-data-2
+	 * @param asset Asset ticker (e.g. BTC)
+	 * @param denominator Denominator ticker (e.g. USD)
+	 * @param exchange Exchange name (e.g. KRAKEN)
+	 * @param interval 	OHLCV Interval (30s, 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 1w, 1mo)
+	 * @param dateStart Specific date to start from (e.g. 5.8.2020)
+	 * @param timeStart Specific time to start from (in UTC) (e.g. 14:00:00)
+	 * @param dateEnd Specific end date (e.g. 5.8.2020)
+	 * @param timeEnd Specific end time (in UTC) (e.g. 14:00:00)
+	 * @param page Optional, our API is always showing 100 results per page in order to improve the performance. You can provide the page parameter in order to query a specific page
+	 * @return JsonObject
+	 */
+	public JsonObject GetHistoricalOHLCVData(String asset, String denominator, String exchanges, String interval, String dateStart, String timeStart, String dateEnd, String timeEnd, int page) {
+		exchanges = exchanges.trim().replace(" ", "");
+		
+		JsonObject responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/ohlcv?asset=" + asset + "&denominator=" + denominator + "&exchange=" + exchanges + "&interval=" + interval + "&dateStart=" + dateStart + "&timeStart=" + timeStart + "&dateEnd=" + dateEnd + "&timeEnd=" + timeEnd + "&page=" + page))
+      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+			responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+	
+	/**
 	 * Gets historical exchange trades in specific second.
 	 * Reference: https://docs.blockfacts.io/?java#specific-trade-data
 	 * @param asset Asset ticker (e.g. BTC)
@@ -229,29 +335,60 @@ public class ExchangeEndpoints extends Endpoints {
 	}
 	
 	/**
-	 * Gets exchange end of day data for specific asset-denominator and exchange.
-	 * Reference: https://docs.blockfacts.io/?java#end-of-day-data-2
+	 * Gets the total traded volume on all exchanges by asset-denominator and interval.
+	 * Reference: https://docs.blockfacts.io/?java#total-trade-volume
 	 * @param asset Asset ticker (e.g. BTC)
 	 * @param denominator Denominator ticker (e.g. USD)
-	 * @param exchange Exchange name (e.g. KRAKEN)
-	 * @param length Length (representing how many days back from the current day, Min = 0, Max = 20)
-	 * @return List of BlockfactsEndOfDayModels
+	 * @param interval Interval (1d, 30d, 60d, 90d)
+	 * @return JsonObject
 	 */
-	public List<BlockfactsOHLCModel> GetEndOfDayData(String asset, String denominator, String exchange, int length) {
-		List<BlockfactsOHLCModel> responseData = null;
+	public JsonObject GetTotalTradeVolume(String asset, String denominator, String interval) {
+		JsonObject responseData = null;
 		
 		restRequest = HttpRequest.newBuilder()
-      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/endOfDay?asset=" + asset + "&denominator=" + denominator + "&exchange=" + exchange + "&length=" + length))
-      	      .header("Content-Type", this.headers.get("Content-Type").toString())
-      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
-      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
-      	      .build();
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/trades/total-volume?asset=" + asset + "&denominator=" + denominator + "&interval=" + interval ))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
 		
-		  HttpResponse<String> response;
+		HttpResponse<String> response;
 		  try {
 			response = restClient.send(restRequest, BodyHandlers.ofString());
- 	        JsonArray jsonObj = new JsonParser().parse(response.body()).getAsJsonArray();
-	        responseData = new Gson().fromJson(jsonObj, new TypeToken<List<BlockfactsOHLCModel>>(){}.getType());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonObject();
+		  } catch (IOException e) {
+			e.printStackTrace();
+		  } catch (InterruptedException e) {
+			e.printStackTrace();
+		  }
+		  
+		  return responseData;
+	}
+	
+	/**
+	 * Gets the moving percentage, and difference in price over a certain time period.
+	 * Reference: https://docs.blockfacts.io/?java#period-movers-2
+	 * @param exchange Exchange name (e.g. KRAKEN)
+	 * @param denominator Specific date (e.g. 11.8.2020)
+	 * @param date Denominator ticker (e.g. USD)
+	 * @param interval Interval (oneDay, sevenDay, thirtyDay, ninetyDay, oneYear, twoYear, threeYear, fiveYear)
+	 * @param sort 1 - Losers first, -1 - Winners first
+	 * @return JsonArray
+	 */
+	public JsonArray GetPeriodMovers(String exchange, String denominator, String date, String interval, int sort) {
+		JsonArray responseData = null;
+		
+		restRequest = HttpRequest.newBuilder()
+	      	      .uri(URI.create(this.blockfactsApiUrl + "/api/v1/exchanges/period-movers?exchange=" + exchange + "&denominator=" + denominator + "&date=" + date + "&interval=" + interval + "&sort=" + sort))
+	      	      .header("Content-Type", this.headers.get("Content-Type").toString())
+	      	      .header("X-API-KEY", this.headers.get("X-API-KEY").toString())
+	      	      .header("X-API-SECRET", this.headers.get("X-API-SECRET").toString())
+	      	      .build();
+		
+		HttpResponse<String> response;
+		  try {
+			response = restClient.send(restRequest, BodyHandlers.ofString());
+	        responseData = new JsonParser().parse(response.body()).getAsJsonArray();
 		  } catch (IOException e) {
 			e.printStackTrace();
 		  } catch (InterruptedException e) {
